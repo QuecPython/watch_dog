@@ -63,17 +63,19 @@ class _WatchDog(object):
                                 break
 
             if should_feed:
-                if callable(self.__feed_impl):
-                    self.__feed_impl(self.__feed_impl_args)
-                for tid, data in self.__thread_dict.items():
-                    if data['flag'] is True:
-                        data['last_feed_time'] = utime.time()
-                        data['flag'] = False
+                with self.__lock:
+                    if callable(self.__feed_impl):
+                        self.__feed_impl(self.__feed_impl_args)
+                    for tid, data in self.__thread_dict.items():
+                        if data['flag'] is True:
+                            data['last_feed_time'] = utime.time()
+                            data['flag'] = False
 
             utime.sleep(self.__feed_cycle)
-            for tid, data in self.__thread_dict.items():
-                if data['queue']:
-                    data['queue'].put(None)
+            with self.__lock:
+                for tid, data in self.__thread_dict.items():
+                    if data['queue']:
+                        data['queue'].put(None)
 
     def __start(self, *args):
         if not self.__tid or (self.__tid and not _thread.threadIsRunning(self.__tid)):
