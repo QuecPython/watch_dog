@@ -1,63 +1,32 @@
-# QuecPython soft watch dog
+# QuecPython Software Watchdog
 
-[[中文](README_ZH.md)]
+[中文](README_ZH.md) | English
 
-QuecPython The software watchdog solution can solve the running safety problem of the QuecPython subthread, which is convenient to restart the application or restart the system when the APP application fails to execute abnormally.
+## Overview
 
-## init soft watch dog
+The QuecPython watchdog component is designed to provide a separate software watchdog object for each thread. Users can call the `WDG.create` method in a thread to create a software watchdog object `wdg` and call the `wdg.feed` method to feed the watchdog.
 
-### `WDG.init`
+This watchdog component essentially implements a voting mechanism. Threads that have created a software watchdog need to periodically call the `wdg.feed` method to feed the watchdog. This feeding action is equivalent to voting. When all threads that have created a software watchdog object have fed the watchdog, the hardware watchdog will be triggered to feed.
 
-```python
-# import lib
-from usr.watch_dog import WDG
-# Initialize the software watchdog parameters
-WDG.init(feed_cycle, feed_impl=None, *args)
-```
+## Usage
 
-The software watchdog parameters are initialized by the software watchdog object.
+- [API Reference Manual](./docs/en/API_Reference.md)
+- [Example Code](./code/demo.py)
 
-**Parameter description:**
+## Contribution
 
-- `feed_cycle` - The period of the software watchdog, that is, how often to check the running status of child threads, is shorter than that of the hardware watchdog
-- `feed_impl` - The feeding function of the software watchdog is to trigger the actions of the watchdog after feeding the dog, such as restarting, etc. It is recommended to add the feeding action of the hardware watchdog to the function
-- `args` - The parameter you want to pass to the implementation function
+We welcome contributions to improve this project! Please follow these steps to contribute:
 
-## create watch dog object
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature`).
+3. Commit your changes (`git commit -m 'Add your feature'`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a Pull Request.
 
-### `WDG.create`
+## License
 
-```python
-# Bind the watchdog to the corresponding subthread
-wdg = WDG.create(timeout, queue=None)
-```
+This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for details.
 
-Call this method in the child thread that needs to join the watchdog, before the child thread loops.
+## Support
 
-**Parameter description:**
-
-- `timeout`- Cycle period of the child thread, unit: second. For example, the child thread cycles once every second. The parameter is passed as 1
-- `queue`- Queue of child threads. If the child thread is implemented through a queue, this queue is passed to the child thread queue. If there is no queue, there is no need to pass it
-
-## feed watch dog
-
-### `wdg.feed`
-
-```python
-# feed watch dog in child thread
-wdg.feed()
-```
-
-This method is called in the child thread that needs to be added to the watchdog, once per loop.
-
-## delete watch dog object
-
-### `wdg.destroy`
-
-```python
-# The child thread is unbound from the watchdog. Procedure
-wdg.destroy()
-```
-
-Call this method in the child thread that needs to be added to the watchdog to unbind the watchdog object to that thread
-
+If you have any questions or need support, please refer to the [QuecPython documentation](https://python.quectel.com/doc/en) or open an issue in this repository.

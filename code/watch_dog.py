@@ -72,6 +72,7 @@ class _WatchDog(object):
                             data['flag'] = False
 
             utime.sleep(self.__feed_cycle)
+
             with self.__lock:
                 for tid, data in self.__thread_dict.items():
                     if data['queue']:

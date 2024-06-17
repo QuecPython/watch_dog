@@ -1,63 +1,32 @@
 # QuecPython 软件看门狗
 
-[[English](README.md)]
+中文 | [English](README.md)
 
-QuecPython 软件看门狗方案可以解决QuecPython子线程运行安全问题，方便在APP应用程序发生异常不执行时进行重启应用或者重启系统等操作。
+## 概述
 
-## 初始化软狗
+QuecPython 看门狗组件在设计上为每一个线程提供单独的软件看门狗对象，用户可以在线程中调用 `WDG.create` 方法创建一个软件看门狗对象 `wdg`，并调用 `wdg.feed` 方法喂狗。
 
-### `WDG.init`
+该看门狗组件本质上是基于投票机制来实现的。创建了软件看门狗的线程需周期性调用 `wdg.feed` 方法喂狗，该喂狗动作即为投票。当所有创建了软件看门狗对象的线程均喂狗了，硬件上的看门狗会被触发喂狗。
 
-```python
-# 导入库
-from usr.watch_dog import WDG
-# 初始化软件看门狗参数
-WDG.init(feed_cycle, feed_impl=None, *args)
-```
+## 用法
 
-通过软件看门狗对象初始化软件看门狗参数。
+- [API 参考手册](./docs/zh/API参考手册.md)
+- [示例代码](./code/demo.py)
 
-**参数描述：**
+## 贡献
 
-- `feed_cycle` - 软件看门狗的周期，即为多久检查一次子线程的运行情况，建议设置的比硬件看门狗的周期短
-- `feed_impl` - 软件看门狗的喂狗实现函数，即为触发看门狗喂狗之后的动作，例如重启等，建议在函数中添加硬件看门狗的喂狗动作
-- `args` - 想要传给实现函数的参数
+我们欢迎对本项目的改进做出贡献！请按照以下步骤进行贡献：
 
-## 创建软狗对象
+1. Fork 此仓库。
+2. 创建一个新分支（`git checkout -b feature/your-feature`）。
+3. 提交您的更改（`git commit -m 'Add your feature'`）。
+4. 推送到分支（`git push origin feature/your-feature`）。
+5. 打开一个 Pull Request。
 
-### `WDG.create`
+## 许可证
 
-```python
-# 绑定看门狗到对应子线程
-wdg = WDG.create(timeout, queue=None)
-```
+本项目使用 Apache 许可证。详细信息请参阅 [LICENSE](LICENSE) 文件。
 
-在需要加入看门狗的子线程中调用此方法,注意需要在子线程循环之前。
+## 支持
 
-**参数描述：**
-
-- `timeout`- 子线程的循环周期，单位：秒，例如子线程一秒循环一次，参数传1
-- `queue`- 子线程队列，如果子线程是通过队列实现的，该处传子线程队列，如果没有就不用传
-
-## 喂狗
-
-### `wdg.feed`
-
-```python
-# 子线程喂狗
-wdg.feed()
-```
-
-在需要加入看门狗的子线程中调用此方法，子线程每循环一次调用一次。
-
-## 删除软狗对象
-
-### `wdg.destroy`
-
-```python
-# 子线程解除绑定看门狗
-wdg.destroy()
-```
-
-在需要加入看门狗的子线程中调用此方法，解除该线程绑定的看门狗对象
-
+如果您有任何问题或需要支持，请参阅 [QuecPython 文档](https://python.quectel.com/doc) 或在本仓库中打开一个 issue。
